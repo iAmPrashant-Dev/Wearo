@@ -7,6 +7,7 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, select: false },
   image: { type: String },
+  tryOnImages: [{ type: String }],
   provider: {
     type: [String],
     default: ["email"],
@@ -30,7 +31,9 @@ const UserSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Product"
   }],
-  emailVerified: { type: Date }
+  emailVerified: { type: Date },
+  dailyTryOnCount: { type: Number, default: 0 },
+  lastTryOnDate: { type: Date }
 }, {
   timestamps: true
 });

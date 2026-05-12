@@ -10,9 +10,7 @@ import { useOrderStore } from "@/store/useOrderStore";
 export default function StoreInitializer() {
   const { status } = useSession();
   const isInitialLoad = useRef(true);
-  const syncTimeout = useRef(null);
 
-  // 1. Initial Data Fetch (Hydration)
   useEffect(() => {
     if (status === "authenticated") {
       const fetchUserData = async () => {
@@ -21,7 +19,6 @@ export default function StoreInitializer() {
           if (!res.ok) return;
           const data = await res.json();
 
-          // Hydrate stores
           if (data.cart) useCartStore.getState().setCart(data.cart);
           if (data.wishlist) useWishlistStore.getState().setWishlist(data.wishlist);
           if (data.addresses) useAddressStore.getState().setAddresses(data.addresses);
@@ -30,17 +27,16 @@ export default function StoreInitializer() {
           isInitialLoad.current = false;
         } catch (error) {
           console.error("Failed to hydrate stores from API:", error);
-          isInitialLoad.current = false; // allow syncing even if fetch fails to avoid locking
+          isInitialLoad.current = false;
         }
       };
 
       fetchUserData();
     } else if (status === "unauthenticated") {
-      // If user logs out or is unauthenticated, they shouldn't sync
       isInitialLoad.current = false;
     }
   }, [status]);
 
 
-  return null; // This is a logic-only component
+  return null;
 }

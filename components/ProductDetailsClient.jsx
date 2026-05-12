@@ -10,10 +10,14 @@ import { useWishlistStore } from "@/store/useWishlistStore";
 import { useSession } from "next-auth/react";
 import { useRouter } from 'next/navigation'
 import { toast } from "sonner";
+import TryOnModal from "./TryOnModal";
+import { Sparkles } from "lucide-react";
 
 export default function ProductDetailsClient({ product }) {
   const { data: session, status } = useSession();
   const router = useRouter()
+  // Add a virtual tryon button that will open a modal to select image, user image is stored in user.tryOnImages mongoDB schema, select image and below it have a select product image once selected send both to api call  
+
 
   // Zustand stores
   const addItem = useCartStore((state) => state.addItem);
@@ -32,6 +36,7 @@ export default function ProductDetailsClient({ product }) {
   const [isAddedToCart, setIsAddedToCart] = useState(false);
   const [zoomPos, setZoomPos] = useState({ x: 0, y: 0 });
   const [isZoomed, setIsZoomed] = useState(false);
+  const [isTryOnOpen, setIsTryOnOpen] = useState(false);
 
   const handleMouseMove = (e) => {
     const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
@@ -243,7 +248,7 @@ export default function ProductDetailsClient({ product }) {
           <div className="flex flex-col sm:flex-row gap-4 mb-10">
             <Button
               size="lg"
-              className={`flex-1 h-14 cursor-pointer text-base ${isAddedToCart ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
+              className={`flex-1 py-4 h-14 cursor-pointer text-base ${isAddedToCart ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
               onClick={handleAddToCart}
             >
               <ShoppingCart className={`mr-2 h-5 w-5 ${isAddedToCart ? "animate-bounce" : ""}`} />
@@ -253,11 +258,21 @@ export default function ProductDetailsClient({ product }) {
             <Button
               size="lg"
               variant="outline"
+              className="h-14 px-6 shrink-0 cursor-pointer border-indigo-500/50 hover:bg-indigo-50 dark:hover:bg-indigo-500/10"
+              onClick={() => setIsTryOnOpen(true)}
+            >
+              <Sparkles className="mr-2 h-5 w-5 text-indigo-500" />
+              Try On
+            </Button>
+
+            <Button
+              size="lg"
+              variant="outline"
               className="h-14 px-6 shrink-0 cursor-pointer"
               onClick={handleWishlist}
             >
               <Heart className={`mr-2 h-5 w-5 ${isWishlisted ? "fill-red-500 text-red-500" : ""}`} />
-              {isWishlisted ? "Wishlisted" : "Wishlist"}
+              {/* {isWishlisted ? "Wishlisted" : "Wishlist"} */}
             </Button>
           </div>
 
@@ -292,6 +307,13 @@ export default function ProductDetailsClient({ product }) {
           )}
         </div>
       </div>
+      <TryOnModal
+        isOpen={isTryOnOpen}
+        onClose={() => setIsTryOnOpen(false)}
+        productImages={product.images}
+        productName={product.name}
+        productDes={product.category}
+      />
     </div>
   );
 }
