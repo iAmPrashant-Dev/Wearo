@@ -46,7 +46,7 @@ export default function ProductCard({ product }) {
 
   return (
     <Link
-      href={`/products/${product._id}`}
+      href={`/product/${product._id}`}
       className="group block bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 shadow-sm hover:shadow-lg transition-all duration-300"
     >
       {/* Image area - Matching TrendingSection m-3 rounded-2xl */}

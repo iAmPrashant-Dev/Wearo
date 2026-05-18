@@ -179,7 +179,7 @@ export default function ProductDetailsClient({ product }) {
                 {product.variants.map((variant) => (
                   <a
                     key={variant.id || variant._id}
-                    href={`/products/${variant.id || variant._id}`}
+                    href={`/product/${variant.id || variant._id}`}
                     className="w-12 h-12 rounded-full flex items-center justify-center p-0.5 transition-all opacity-60 hover:opacity-100 hover:scale-110"
                   >
                     <span

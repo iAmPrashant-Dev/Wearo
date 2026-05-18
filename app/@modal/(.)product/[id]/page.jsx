@@ -1,6 +1,5 @@
 import ProductDetailsClient from "@/components/ProductDetailsClient";
 import ProductModal from "@/components/ProductModal";
-import { notFound } from "next/navigation";
 
 async function getProduct(id) {
   try {
@@ -16,14 +15,13 @@ async function getProduct(id) {
 }
 
 export default async function ProductDetailsModalPage({ params }) {
-  // In Next.js 15+, params is a promise. We await it.
   const resolvedParams = await params;
   const { id } = resolvedParams;
 
   const product = await getProduct(id);
 
   if (!product) {
-    notFound();
+    return null;
   }
 
   return (
