@@ -18,17 +18,19 @@ export const metadata = {
   description: "Discover trendy apparel, unique designs, and high-quality clothing. A modern ecommerce clothing store built for a seamless shopping experience.",
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children, modal }) {
   return (
     <html
       lang="en"
       className={`${plusJakarta.variable} h-full antialiased`}
+
     >
       <Providers>
         <StoreInitializer />
-        <body className="min-h-full flex flex-col">
+        <body className="min-h-full flex flex-col" >
           <Navbar />
           {children}
+          {modal}
           <Toaster
             position="top-center"
             toastOptions={{
