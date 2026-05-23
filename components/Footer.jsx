@@ -3,24 +3,24 @@ import Link from "next/link";
 const shopLinks = [
   { label: "Men's Collection", href: "/products/men" },
   { label: "Women's Collection", href: "/products/women" },
-  { label: "Oversized Fit", href: "/products/oversized" },
+  // { label: "Oversized Fit", href: "/products/oversized" },
   { label: "New Arrivals", href: "/products/new-arrivals" },
   { label: "Sale & Offers", href: "/products/sale" },
 ];
 
 const companyLinks = [
-  { label: "About Us", href: "/about" },
-  { label: "Careers", href: "/careers" },
-  { label: "Sustainability", href: "/sustainability" },
-  { label: "Press", href: "/press" },
+  { label: "About Us", href: "/" },
+  { label: "Careers", href: "/" },
+  { label: "Sustainability", href: "/" },
+  { label: "Press", href: "/" },
 ];
 
 const helpLinks = [
-  { label: "Customer Service", href: "/support" },
-  { label: "Track Order", href: "/track-order" },
-  { label: "Returns & Exchanges", href: "/returns" },
-  { label: "Shipping Info", href: "/shipping" },
-  { label: "FAQ", href: "/faq" },
+  { label: "Customer Service", href: "/" },
+  { label: "Track Order", href: "/" },
+  { label: "Returns & Exchanges", href: "/" },
+  { label: "Shipping Info", href: "/" },
+  { label: "FAQ", href: "/" },
 ];
 
 export default function Footer() {
@@ -92,7 +92,7 @@ export default function Footer() {
             </h3>
             <ul className="space-y-3">
               {shopLinks.map((link) => (
-                <li key={link.href}>
+                <li key={link.label}>
                   <Link
                     href={link.href}
                     className="text-sm text-zinc-400 hover:text-white transition-colors duration-200"
@@ -111,7 +111,7 @@ export default function Footer() {
             </h3>
             <ul className="space-y-3">
               {companyLinks.map((link) => (
-                <li key={link.href}>
+                <li key={link.label}>
                   <Link
                     href={link.href}
                     className="text-sm text-zinc-400 hover:text-white transition-colors duration-200"
@@ -130,7 +130,7 @@ export default function Footer() {
             </h3>
             <ul className="space-y-3">
               {helpLinks.map((link) => (
-                <li key={link.href}>
+                <li key={link.label}>
                   <Link
                     href={link.href}
                     className="text-sm text-zinc-400 hover:text-white transition-colors duration-200"
@@ -149,10 +149,10 @@ export default function Footer() {
             © {new Date().getFullYear()} Wearo. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
-            <Link href="/privacy" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
+            <Link href="/" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
               Privacy Policy
             </Link>
-            <Link href="/terms" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
+            <Link href="/" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
               Terms of Service
             </Link>
           </div>

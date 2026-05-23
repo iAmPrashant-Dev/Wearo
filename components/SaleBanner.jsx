@@ -28,12 +28,12 @@ export default function SaleBanner() {
 
             {/* Subtitle */}
             <p className="text-base text-zinc-300 mb-8 max-w-sm">
-              On selected Oversized Collection items.
+              On selected Summer Essentials items.
             </p>
 
             {/* CTA */}
             <Link
-              href="/sale"
+              href={"/collections/summer-essentials"}
               className="inline-flex items-center justify-center px-7 py-3.5 bg-white text-black rounded-full font-semibold text-sm sm:text-base hover:scale-105 active:scale-95 transition-transform duration-200 shadow-lg"
             >
               Shop Collection Now

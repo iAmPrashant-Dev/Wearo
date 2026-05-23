@@ -51,6 +51,7 @@ export default function Navbar() {
   const cartItemsCount = useCartStore((state) => state.cart.length);
   const wishlistItemsCount = useWishlistStore((state) => state.wishlist.length);
   const { data: session, status } = useSession();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showLogo, setShowLogo] = useState(true);
   (() => {
     if (showLogo) {
@@ -90,6 +91,21 @@ export default function Navbar() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileMenuOpen]);
 
   return (
     <header className="sticky top-0 z-51 w-full bg-white/80 dark:bg-black/80 backdrop-blur-xl border-b border-zinc-100 dark:border-white/5">
@@ -273,26 +289,195 @@ export default function Navbar() {
 
             {/* Mobile hamburger */}
             <button
-              aria-label="Open menu"
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
               className="xl:hidden relative p-2.5 rounded-xl text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/10 transition-colors duration-200 ml-1"
             >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="4" x2="20" y1="12" y2="12" />
-                <line x1="4" x2="20" y1="6" y2="6" />
-                <line x1="4" x2="20" y1="18" y2="18" />
-              </svg>
+              {mobileMenuOpen ? (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" x2="6" y1="6" y2="18" />
+                  <line x1="6" x2="18" y1="6" y2="18" />
+                </svg>
+              ) : (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="4" x2="20" y1="12" y2="12" />
+                  <line x1="4" x2="20" y1="6" y2="6" />
+                  <line x1="4" x2="20" y1="18" y2="18" />
+                </svg>
+              )}
             </button>
           </div>
         </nav>
+      </div>
+
+      {/* Mobile Menu Overlay + Drawer */}
+      <div
+        className={`xl:hidden fixed inset-0 transition-opacity duration-300 z-53 ${
+          mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        {/* Backdrop */}
+        <div
+          className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+
+        {/* Drawer */}
+        <div
+          className={`absolute top-0 right-0 h-full w-[85%] max-w-sm bg-white dark:bg-zinc-950 shadow-2xl transition-transform duration-300 ease-out ${
+            mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+        >
+          {/* Drawer header */}
+          <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-100 dark:border-white/5">
+            <span className="text-lg font-bold text-zinc-900 dark:text-white tracking-tight">Menu</span>
+            <button
+              aria-label="Close menu"
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-2 rounded-xl text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/10 transition-colors duration-200"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" x2="6" y1="6" y2="18" />
+                <line x1="6" x2="18" y1="6" y2="18" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Drawer body */}
+          <div className="min-h-[calc(100dvh-65px)] bg-white w-full px-5 py-4 flex flex-col gap-5">
+            {/* Mobile Search */}
+            <form
+              onSubmit={(e) => { e.preventDefault(); handleSearch(); setMobileMenuOpen(false); }}
+              className="relative flex items-center"
+            >
+              <Search className="absolute left-3 h-4 w-4 text-zinc-400" />
+              <Input
+                type="search"
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-4 h-10 rounded-xl bg-zinc-100 dark:bg-zinc-900 border-none focus:ring-1 focus:ring-zinc-300 dark:focus:ring-zinc-700"
+              />
+            </form>
+
+            {/* Nav Links */}
+            <ul className="flex flex-col gap-1">
+              {navLinks.map((link) => {
+                const isActive = pathname.includes(link.href);
+                return (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className={`flex items-center px-4 py-3 text-[15px] font-medium rounded-xl transition-colors duration-200 ${
+                        isActive
+                          ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10'
+                          : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/5'
+                      }`}
+                    >
+                      {link.label}
+                      {isActive && (
+                        <span className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                      )}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+
+            <hr className="border-zinc-100 dark:border-white/5" />
+
+            {/* Quick links */}
+            <ul className="flex flex-col gap-1">
+              {session && (
+                <>
+                  <li>
+                    <Link
+                      href="/wishlist"
+                      className="flex items-center gap-3 px-4 py-3 text-[15px] font-medium text-zinc-700 dark:text-zinc-300 rounded-xl hover:bg-zinc-100 dark:hover:bg-white/5 transition-colors duration-200"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                      </svg>
+                      Wishlist
+                      {mounted && wishlistItemsCount > 0 && (
+                        <span className="ml-auto px-2 py-0.5 text-xs font-bold text-white bg-indigo-500 rounded-full">
+                          {wishlistItemsCount}
+                        </span>
+                      )}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/cart"
+                      className="flex items-center gap-3 px-4 py-3 text-[15px] font-medium text-zinc-700 dark:text-zinc-300 rounded-xl hover:bg-zinc-100 dark:hover:bg-white/5 transition-colors duration-200"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+                        <path d="M3 6h18" />
+                        <path d="M16 10a4 4 0 0 1-8 0" />
+                      </svg>
+                      Cart
+                      {mounted && cartItemsCount > 0 && (
+                        <span className="ml-auto px-2 py-0.5 text-xs font-bold text-white bg-indigo-500 rounded-full">
+                          {cartItemsCount}
+                        </span>
+                      )}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/profile"
+                      className="flex items-center gap-3 px-4 py-3 text-[15px] font-medium text-zinc-700 dark:text-zinc-300 rounded-xl hover:bg-zinc-100 dark:hover:bg-white/5 transition-colors duration-200"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
+                      Profile
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/orders"
+                      className="flex items-center gap-3 px-4 py-3 text-[15px] font-medium text-zinc-700 dark:text-zinc-300 rounded-xl hover:bg-zinc-100 dark:hover:bg-white/5 transition-colors duration-200"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+                        <path d="m3.3 7 8.7 5 8.7-5" />
+                        <path d="M12 22V12" />
+                      </svg>
+                      Orders
+                    </Link>
+                  </li>
+                </>
+              )}
+            </ul>
+
+            {/* Bottom action */}
+            <div className="mt-auto pt-4 border-t border-zinc-100 dark:border-white/5">
+              {session ? (
+                <button
+                  onClick={() => { handleLogout(); setMobileMenuOpen(false); }}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 text-[15px] font-medium text-red-600 bg-red-50 dark:bg-red-950/30 rounded-xl hover:bg-red-100 dark:hover:bg-red-950/50 transition-colors duration-200"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" x2="9" y1="12" y2="12" />
+                  </svg>
+                  Logout
+                </button>
+              ) : (
+                <Link
+                  href="/login"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 text-[15px] font-medium text-white bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all duration-200 shadow-sm"
+                >
+                  Login
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </header>
   );

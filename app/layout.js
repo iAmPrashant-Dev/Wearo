@@ -43,7 +43,7 @@ export default function RootLayout({ children, modal }) {
               },
             }}
           />
-          {/* <Footer /> */}
+          <Footer />
         </body>
       </Providers>
     </html>
